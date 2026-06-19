@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ODC – Price Variation Notice (Effective 1 July 2026)</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/signature_pad/4.1.7/signature_pad.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>window.__msalLoaded = false;</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/msal-browser/2.38.3/msal-browser.min.js"
+        onload="window.__msalLoaded = true;"
+        onerror="(function(){var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/@azure/msal-browser@2.38.3/lib/msal-browser.min.js';s.onload=function(){window.__msalLoaded=true};document.head.appendChild(s);})();"></script>
+<style>
+  :root {
+    --odc-green: #4a7c3f;
+    --odc-dark-green: #3a6330;
+    --odc-light-green: #eaf2e6;
+    --odc-yellow: #c9a227;
+    --odc-border: #c8dfc2;
+  }
+  * { box-sizing: border-box; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f4ee; font-size: 14px; margin: 0; }
+
+  /* ── Sticky header bar ── */
+  .topbar {
+    position: sticky; top: 0; z-index: 200;
+    background: var(--odc-green); color: white; padding: 10px 22px;
+    display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+    box-shadow: 0 2px 8px rgba(0,0,0,.25);
+  }
+  .topbar h1 { font-size: 1.05rem; margin: 0; font-weight: 700; }
+  .topbar small { opacity: .85; font-size: .76rem; display: block; }
+  .topbar .title { flex: 1 1 220px; }
+  .topbar .actions { display: flex; gap: 6px; flex-wrap: wrap; }
+  .topbar .btn-tb {
+    background: rgba(255,255,255,.18); color: white;
+    border: 1px solid rgba(255,255,255,.35);
+    padding: 6px 12px; border-radius: 6px;
+    font-weight: 600; font-size: .8rem; cursor: pointer;
+    white-space: nowrap;
+  }
+  .topbar .btn-tb:hover { background: rgba(255,255,255,.3); }
+  .topbar .btn-tb.primary { background: white; color: var(--odc-green); }
+  .topbar .btn-tb.primary:hover { background: #eaf3ea; }
+  .topbar .btn-tb.warn { background: rgba(255,255,255,.18); }
+  .sp-state { font-size: .76rem; opacity: .85; }
+
+  /* ── Main page ── */
+  .page { max-width: 1180px; margin: 0 auto; padding: 18px 22px 80px; }
+
+  .card-block {
+    background: white; border: 1px solid var(--odc-border);
+    border-radius: 8px; padding: 16px 20px; margin-bottom: 14px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.04);
+  }
+  .card-block h2 {
+    font-size: .9rem; font-weight: 700; color: var(--odc-green);
+    text-transform: uppercase; letter-spacing: .07em;
+    border-bottom: 2px solid var(--odc-border); padding-bottom: 5px;
+    margin: 0 0 12px;
+  }
+
+  .form-label { font-weight: 600; font-size: .8rem; color: #444; margin-bottom: 3px; }
+  .form-control, .form-select {
+    border-color: #c5d8c0; font-size: .86rem;
+    border-radius: 6px; padding: 5px 9px;
+  }
+  .row.g-2 { row-gap: 8px !important; }
+
+  /* Radio "card" labels — used for variant + consent toggles */
+  .opt-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .opt-card {
+    flex: 1 1 160px; display: flex; align-items: center; gap: 8px;
+    padding: 8px 12px; border: 2px solid #d9dfcc; border-radius: 8px;
+    cursor: pointer; background: #fafdf6; font-size: .85rem;
+  }
+  .opt-card input { accent-color: var(--odc-green); }
+  .opt-card strong { display: block; font-size: .88rem; }
+  .opt-card small { color: #777; font-size: .73rem; }
+
+  .load-banner {
+    background: #eaf3ff; border: 1px solid #b5d4f7; padding: 10px 14px;
+    border-radius: 8px; margin-bottom: 14px;
+    display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between;
+  }
+  .load-banner .desc { color: #1a4a7a; font-size: .86rem; }
+
+  /* ── Rendered document content ── */
+  .doc-card {
+    background: white; border: 1px solid var(--odc-border);
+    border-radius: 8px; margin-bottom: 16px; padding: 18px 22px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.04);
+  }
+  .doc-cover {
+    text-align: center; padding: 12pt 0 10pt 0;
+    border-bottom: 2pt solid var(--odc-green); margin-bottom: 14pt;
+  }
+  .doc-cover-title { font-size: 16pt; font-weight: 800; color: #122; margin-top: 8pt; }
+  .doc-cover-subtitle { font-size: 10.5pt; color: #555; margin-top: 4pt; }
+  .doc-cover-version { font-size: 8.5pt; color: #666; margin-top: 7pt; letter-spacing: .6pt; }
+  .doc-section-h {
+    color: var(--odc-green); font-weight: 700; font-size: .92rem;
+    border-bottom: 2px solid var(--odc-green); padding-bottom: 3px; margin: 14px 0 8px;
+  }
+  .doc-info-box { background: var(--odc-light-green); border: 1px solid var(--odc-border);
+    border-radius: 6px; padding: 10px 14px; font-size: .87rem; margin: 10px 0; }
+  .doc-note { background: #fffde7; border-left: 4px solid var(--odc-yellow);
+    padding: 10px 14px; border-radius: 0 6px 6px 0; font-size: .87rem; margin: 10px 0; }
+  .doc-table { width: 100%; border-collapse: collapse; font-size: .85rem; margin: 6px 0; }
+  .doc-table td, .doc-table th { border: 1px solid #d8e2cf; padding: 5px 9px; text-align: left; }
+  .doc-table th, .doc-table .lbl { background: #eaf2e6; font-weight: 700; }
+  .price-row-changed { background: #fff8e7; }
+
+  /* ── Inline editable ff() fields ── */
+  .ff.empty { color: #bbb; font-style: italic; }
+  input.ff-inline {
+    display: inline-block; min-width: 140px; max-width: 100%;
+    padding: 2px 6px; border: none;
+    border-bottom: 1.5px solid var(--odc-green);
+    background: #fafdf6; font-weight: 600; color: #122;
+    font-family: inherit; font-size: inherit; outline: none;
+    vertical-align: baseline;
+  }
+  input.ff-inline:focus { background: #eef4ff; border-bottom-color: #0d6efd; }
+  input.ff-inline::placeholder { color: #bbb; font-style: italic; font-weight: 400; }
+
+  /* ── Inline signature canvases (each one is its own pad) ── */
+  .sig-block {
+    display: inline-block; vertical-align: top; margin: 8px 8px 8px 0;
+  }
+  .sig-canvas-inline {
+    display: block;
+    width: 280px; height: 90px;
+    background: #fafdf6;
+    border: 1.5px dashed var(--odc-border);
+    border-radius: 4px;
+    touch-action: none; cursor: crosshair;
+  }
+  .sig-canvas-inline.signed {
+    border-style: solid; border-color: var(--odc-green); background: white;
+  }
+  .sig-label-row {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: .78rem; color: #555; margin-top: 4px;
+  }
+  .sig-clear-btn {
+    background: none; border: none; color: #c0392b;
+    font-size: .76rem; cursor: pointer; padding: 0;
+    text-decoration: underline;
+  }
+  .sig-clear-btn:hover { color: #a02020; }
+
+  /* ── Picker modal ── */
+  .picker-backdrop {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,.5);
+    z-index: 9998; align-items: center; justify-content: center; padding: 20px;
+  }
+  .picker-backdrop.open { display: flex; }
+  .picker-modal {
+    background: white; border-radius: 10px; max-width: 720px; width: 100%;
+    max-height: 80vh; overflow: hidden; display: flex; flex-direction: column;
+    box-shadow: 0 12px 40px rgba(0,0,0,.3);
+  }
+  .picker-header {
+    background: var(--odc-green); color: white; padding: 14px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .picker-header h3 { margin: 0; font-size: 1rem; font-weight: 700; }
+  .picker-close {
+    background: rgba(255,255,255,.2); color: white; border: none;
+    padding: 5px 10px; border-radius: 4px; cursor: pointer;
+  }
+  .picker-body { padding: 14px 18px; overflow-y: auto; flex: 1; }
+  .picker-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 12px; border: 1px solid #eaeaea; border-radius: 6px;
+    margin-bottom: 8px; cursor: pointer;
+  }
+  .picker-row:hover { background: #f7fbf6; border-color: var(--odc-border); }
+  .picker-row .name { font-weight: 600; color: #234; }
+  .picker-row .meta { font-size: .76rem; color: #888; margin-top: 2px; }
+  .picker-empty { text-align: center; color: #888; padding: 36px 16px; font-style: italic; }
+  .picker-status { padding: 8px 16px; font-size: .84rem; }
+  .picker-status.info { background: #eaf3ff; color: #1a4a7a; }
+  .picker-status.error { background: #fef3ef; color: #7a4a1a; }
+  .picker-status.success { background: #eef9ea; color: #2f4a2a; }
+
+  /* ── PDF / print rendering ── */
+  @media print {
+    body { background: white; color: #000; font-size: 10.5pt; }
+    .topbar, .load-banner, .no-print { display: none !important; }
+    .card-block { box-shadow: none !important; border: none !important; padding: 0 !important; background: transparent !important; }
+    .card-block h2 { display: none !important; }
+    .doc-card { box-shadow: none !important; border: none !important; padding: 0 !important; page-break-inside: auto; }
+    .doc-card:not(:last-child) { page-break-after: always; }
+    input.ff-inline { border: none !important; border-bottom: 1.5px solid #1a4f8a !important; background: transparent !important; }
+    input.ff-inline::placeholder { color: transparent !important; }
+    .sig-canvas-inline { border: none !important; border-bottom: 1.5px solid #1a4f8a !important; background: transparent !important; height: 70px !important; }
+    .sig-clear-btn, .sig-label-row { display: none !important; }
+    /* Hide everything before #docContainer (form/settings) when printing */
+    #settingsBlock, #clientInfoBlock, .load-banner { display: none !important; }
+  }
+  body.pdf-rendering .topbar,
+  body.pdf-rendering .load-banner,
+  body.pdf-rendering #settingsBlock,
+  body.pdf-rendering #clientInfoBlock,
+  body.pdf-rendering .no-print { display: none !important; }
+  body.pdf-rendering .card-block { box-shadow: none !important; border: none !important; padding: 0 !important; background: transparent !important; }
+  body.pdf-rendering .doc-card { box-shadow: none !important; border: none !important; padding: 0 !important; }
+  body.pdf-rendering input.ff-inline { border: none !important; border-bottom: 1.5px solid #1a4f8a !important; background: transparent !important; }
+  body.pdf-rendering input.ff-inline::placeholder { color: transparent !important; }
+  body.pdf-rendering .sig-canvas-inline { border: none !important; border-bottom: 1.5px solid #1a4f8a !important; background: transparent !important; height: 70px !important; }
+  body.pdf-rendering .sig-clear-btn, body.pdf-rendering .sig-label-row { display: none !important; }
+  body.pdf-rendering .page { padding: 0 !important; max-width: none !important; }
+</style>
+</head>
+<body>
+
+<!-- ───────────── Sticky top bar ───────────── -->
+<div class="topbar">
+  <div class="title">
+    <h1>📝 Price Variation Notice</h1>
+    <small>Effective 1 July 2026 · V1.5 JUN 2026 · Express (in-person signing)</small>
+  </div>
+  <div class="sp-state" id="spState">Not signed in</div>
+  <div class="actions">
+    <button class="btn-tb" id="spSignInBtn" onclick="spSignIn()">Sign in</button>
+    <button class="btn-tb" id="spSignOutBtn" onclick="spSignOut()" style="display:none;">Sign out</button>
+    <button class="btn-tb primary" onclick="openClientPicker()">📂 Load Client</button>
+    <button class="btn-tb primary" onclick="saveToSharePoint()">☁ Save to SharePoint</button>
+    <button class="btn-tb" onclick="generatePdf()">🖨 PDF</button>
+    <button class="btn-tb warn" onclick="clearAll()">🗑 New Client</button>
+  </div>
+</div>
+
+<div class="page">
+
+  <!-- Load shortcut -->
+  <div class="load-banner no-print">
+    <div class="desc"><strong>🔗 Quick start:</strong> Load this client from SharePoint to auto-fill the details below.</div>
+    <button class="btn btn-primary" onclick="openClientPicker()">📂 Load from SharePoint</button>
+  </div>
+
+  <!-- ───────────── Settings (variant + consent) ───────────── -->
+  <div class="card-block no-print" id="settingsBlock">
+    <h2>Settings</h2>
+    <div class="row g-2">
+      <div class="col-md-6">
+        <div class="form-label">Contract Variant on Original Agreement</div>
+        <div class="opt-row">
+          <label class="opt-card">
+            <input type="radio" name="variant" value="allstates" checked oninput="onSettingChange()">
+            <span><strong>🌏 All States</strong><small>NSW · ACT · QLD · VIC</small></span>
+          </label>
+          <label class="opt-card">
+            <input type="radio" name="variant" value="selfmanaged" oninput="onSettingChange()">
+            <span><strong>🤝 Self-Managed</strong><small>SM</small></span>
+          </label>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-label">Consent Method</div>
+        <div class="opt-row">
+          <label class="opt-card">
+            <input type="radio" name="consentMethod" value="written" checked oninput="onSettingChange()">
+            <span><strong>✍️ Written</strong><small>Sign below</small></span>
+          </label>
+          <label class="opt-card">
+            <input type="radio" name="consentMethod" value="verbal" oninput="onSettingChange()">
+            <span><strong>🗣️ Verbal</strong><small>Recorded by ODC</small></span>
+          </label>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Effective Date</label>
+        <input type="date" class="form-control" id="f_effDate" value="2026-07-01" oninput="onInputChange()">
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Response Deadline (optional)</label>
+        <input type="date" class="form-control" id="f_deadline" oninput="onInputChange()">
+      </div>
+      <div class="col-md-3" id="verbalFields1" style="display:none;">
+        <label class="form-label">Verbal Consent Date</label>
+        <input type="date" class="form-control" id="f_verbalDate" oninput="onInputChange()">
+      </div>
+      <div class="col-md-3" id="verbalFields2" style="display:none;">
+        <label class="form-label">Method</label>
+        <select class="form-select" id="f_verbalMethod" oninput="onInputChange()">
+          <option value="">— select —</option>
+          <option>In-person</option><option>Phone</option><option>Video call</option>
+        </select>
+      </div>
+      <div class="col-md-3" id="verbalFields3" style="display:none;">
+        <label class="form-label">Witness (if any)</label>
+        <input type="text" class="form-control" id="f_witness" oninput="onInputChange()">
+      </div>
+    </div>
+  </div>
+
+  <!-- ───────────── Client Info ───────────── -->
+  <div class="card-block no-print" id="clientInfoBlock">
+    <h2>Client Information</h2>
+    <div class="row g-2">
+      <div class="col-md-4"><label class="form-label">Full Name <span style="color:#c0392b;">*</span></label>
+        <input type="text" class="form-control" id="f_name" oninput="onInputChange()"></div>
+      <div class="col-md-2"><label class="form-label">Date of Birth</label>
+        <input type="date" class="form-control" id="f_dob" oninput="onInputChange()"></div>
+      <div class="col-md-2"><label class="form-label">AC ID</label>
+        <input type="text" class="form-control" id="f_acId" placeholder="AC1234567" oninput="onInputChange()"></div>
+      <div class="col-md-2"><label class="form-label">Mobile</label>
+        <input type="text" class="form-control" id="f_mobile" oninput="onInputChange()"></div>
+      <div class="col-md-2"><label class="form-label">Email</label>
+        <input type="email" class="form-control" id="f_email" oninput="onInputChange()"></div>
+      <div class="col-md-12"><label class="form-label">Address</label>
+        <input type="text" class="form-control" id="f_address" placeholder="Street, Suburb, Postcode" oninput="onInputChange()"></div>
+      <div class="col-md-3"><label class="form-label">Original Agreement Date</label>
+        <input type="date" class="form-control" id="f_origDate" oninput="onInputChange()"></div>
+      <div class="col-md-3"><label class="form-label">Original Version</label>
+        <input type="text" class="form-control" id="f_origVersion" value="V1.4 JAN 2026" oninput="onInputChange()"></div>
+      <div class="col-md-3"><label class="form-label">ODC Officer Name</label>
+        <input type="text" class="form-control" id="f_officer" placeholder="Staff name" oninput="onInputChange()"></div>
+      <div class="col-md-3"><label class="form-label">Representative (if applicable)</label>
+        <input type="text" class="form-control" id="f_legal" oninput="onInputChange()"></div>
+    </div>
+  </div>
+
+  <!-- ───────────── Rendered documents ───────────── -->
+  <div id="docContainer"></div>
+
+</div>
+
+<!-- ───────────── Picker modal ───────────── -->
+<div class="picker-backdrop" id="pickerBackdrop" onclick="if(event.target===this)closePicker()">
+  <div class="picker-modal">
+    <div class="picker-header">
+      <h3>📂 Load Existing Client</h3>
+      <button class="picker-close" onclick="closePicker()">✕</button>
+    </div>
+    <div class="picker-status info" id="pickerStatus">Loading…</div>
+    <div class="picker-body" id="pickerBody"></div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════════════
+// CONFIG
+// ════════════════════════════════════════════════════════════════
+const SP_CONFIG = {
+  clientId: '7c1eb587-aeaf-43d9-855d-dba2ac0dc99d',
+  tenantId: '857e6685-dad1-41ac-b637-b3fa089eeea8',
+  redirectUri: window.location.origin + window.location.pathname,
+  spHost: 'onedreamcommunity.sharepoint.com',
+  spSitePath: '/sites/AgedCareTeam622',
+  spFolderPath: 'Service Agreement Records',
+  variationsSubfolder: 'Variations',
+  scopes: ['User.Read', 'Files.ReadWrite.All', 'Sites.ReadWrite.All']
+};
+const SAVE_KEY = 'odc_pv2026_express_save_v1';
+
+// ════════════════════════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════════════════════════
+const sigState = { client: null, rep: null, staff: null };  // dataURLs
+const sigPads  = { client: null, rep: null, staff: null };  // SignaturePad instances
+let ffCounter = 0;
+let docOverrides = {};
+let _msal = null;
+const _spCache = { siteId: null, driveId: null };
+
+// ════════════════════════════════════════════════════════════════
+// HELPERS
+// ════════════════════════════════════════════════════════════════
+function $(id){ return document.getElementById(id); }
+function fv(id){ const el = $(id); return el ? (el.value || '') : ''; }
+function fmtDate(s){
+  if (!s) return '';
+  const d = new Date(s);
+  if (isNaN(d)) return s;
+  return String(d.getDate()).padStart(2,'0') + '/' + String(d.getMonth()+1).padStart(2,'0') + '/' + d.getFullYear();
+}
+function escapeHtml(s){
+  return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
+}
+function ff(v){
+  ffCounter++;
+  const key = 'ff:' + ffCounter;
+  const display = (key in docOverrides) ? docOverrides[key] : (v || '');
+  const safe = String(display).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  return '<input type="text" class="ff-inline" data-ffkey="' + key + '" value="' + safe + '" oninput="onFfType(this)" placeholder="[ to fill ]">';
+}
+function onFfType(el){
+  docOverrides[el.dataset.ffkey] = el.value;
+  live();
+}
+function sigCanvas(role){
+  return '<div class="sig-block">'
+       + '<canvas class="sig-canvas-inline" data-role="' + role + '"></canvas>'
+       + '<div class="sig-label-row">'
+       + '<span>Sign here</span>'
+       + '<button class="sig-clear-btn no-print" onclick="clearSig(\'' + role + '\')">Clear</button>'
+       + '</div></div>';
+}
+function getVariant(){
+  const r = document.querySelector('input[name="variant"]:checked');
+  return r ? r.value : 'allstates';
+}
+function getConsentMethod(){
+  const r = document.querySelector('input[name="consentMethod"]:checked');
+  return r ? r.value : 'written';
+}
+function toggleVerbal(){
+  const isVerbal = getConsentMethod() === 'verbal';
+  ['verbalFields1','verbalFields2','verbalFields3'].forEach(id => {
+    const el = $(id); if (el) el.style.display = isVerbal ? '' : 'none';
+  });
+}
+function toast(msg, kind){
+  const colors = {
+    info:    { bg:'#eaf3ff', border:'#6b9bd1', text:'#1a4a7a' },
+    success: { bg:'#eef9ea', border:'#4a7a3c', text:'#2f4a2a' },
+    error:   { bg:'#fef3ef', border:'#d99656', text:'#7a4a1a' }
+  };
+  const c = colors[kind] || colors.info;
+  const t = document.createElement('div');
+  t.style.cssText = 'position:fixed; top:14px; right:14px; max-width:360px; padding:12px 16px; border-radius:8px; box-shadow:0 6px 20px rgba(0,0,0,0.18); z-index:99999; font-size:.86rem; line-height:1.45; background:' + c.bg + '; border:1px solid ' + c.border + '; color:' + c.text + ';';
+  t.innerHTML = msg + ' <button onclick="this.parentNode.remove()" style="float:right; background:none; border:none; cursor:pointer; font-size:1.1rem; padding:0 0 0 8px; color:inherit;">&times;</button>';
+  document.body.appendChild(t);
+  if (kind !== 'error') setTimeout(() => { try { t.remove(); } catch(e){} }, 5000);
+}
+
+// ════════════════════════════════════════════════════════════════
+// SIGNATURE — inline canvases, one pad per role
+// ════════════════════════════════════════════════════════════════
+function resizeCanvas(c){
+  const ratio = Math.max(window.devicePixelRatio || 1, 1);
+  c.width = c.offsetWidth * ratio;
+  c.height = c.offsetHeight * ratio;
+  c.getContext('2d').scale(ratio, ratio);
+}
+function captureCurrentSigs(){
+  ['client','rep','staff'].forEach(role => {
+    const p = sigPads[role];
+    if (p && !p.isEmpty()) sigState[role] = p.toDataURL();
+  });
+}
+function initSigPadsInDoc(){
+  ['client','rep','staff'].forEach(r => sigPads[r] = null);
+  document.querySelectorAll('canvas.sig-canvas-inline').forEach(canvas => {
+    const role = canvas.dataset.role;
+    if (!role) return;
+    resizeCanvas(canvas);
+    const pad = new SignaturePad(canvas, { backgroundColor: 'rgba(255,255,255,0)', penColor: 'rgb(0,0,80)' });
+    if (sigState[role]) {
+      try { pad.fromDataURL(sigState[role]); canvas.classList.add('signed'); } catch(e){}
+    }
+    pad.addEventListener('endStroke', () => {
+      sigState[role] = pad.toDataURL();
+      canvas.classList.add('signed');
+      live();
+    });
+    sigPads[role] = pad;
+  });
+}
+function clearSig(role){
+  if (sigPads[role]) sigPads[role].clear();
+  sigState[role] = null;
+  document.querySelectorAll('canvas.sig-canvas-inline[data-role="' + role + '"]').forEach(c => c.classList.remove('signed'));
+  live();
+}
+
+// ════════════════════════════════════════════════════════════════
+// DOCUMENT RENDERING
+// ════════════════════════════════════════════════════════════════
+function renderDocs(){
+  captureCurrentSigs();
+  ffCounter = 0;
+
+  const name      = fv('f_name');
+  const dob       = fmtDate(fv('f_dob'));
+  const acId      = fv('f_acId');
+  const address   = fv('f_address');
+  const origDate  = fmtDate(fv('f_origDate'));
+  const origVer   = fv('f_origVersion');
+  const effDate   = fmtDate(fv('f_effDate'));
+  const deadline  = fmtDate(fv('f_deadline'));
+  const officer   = fv('f_officer');
+  const legal     = fv('f_legal');
+  const variant   = getVariant();
+  const consentMethod = getConsentMethod();
+  const verbalDate   = fmtDate(fv('f_verbalDate'));
+  const verbalMethod = fv('f_verbalMethod');
+  const witness      = fv('f_witness');
+  const scheduleLabel = variant === 'selfmanaged' ? 'Schedule 6' : 'Schedule 5';
+
+  $('docContainer').innerHTML = [
+    doc1_NoticeAndAcceptance(name, dob, acId, address, origDate, origVer, variant, effDate, deadline, officer, legal, consentMethod, verbalDate, verbalMethod, witness, scheduleLabel),
+    doc2_RevisedSchedule(variant, effDate)
+  ].join('');
+
+  // Re-init signature pads now that the new canvases are in the DOM
+  setTimeout(initSigPadsInDoc, 0);
+}
+
+function doc1_NoticeAndAcceptance(name, dob, acId, address, origDate, origVer, variant, effDate, deadline, officer, legal, consentMethod, verbalDate, verbalMethod, witness, scheduleLabel){
+  const variantLabel = variant === 'selfmanaged' ? 'Self-Managed' : 'All States (Care Managed)';
+  const isVerbal = consentMethod === 'verbal';
+  const isWritten = consentMethod === 'written';
+  const deadlineParagraph = deadline ? `<p style="margin-top:8px;"><em>If we do not hear from you by ${ff(deadline)}, we will assume your acceptance of the revised prices, and they will apply from ${ff(effDate)} as required by clause 18.6 of your Service Agreement.</em></p>` : '';
+
+  return `
+  <div class="doc-card">
+    <div class="doc-cover">
+      <div class="doc-cover-title">Service Agreement Variation</div>
+      <div class="doc-cover-subtitle">Price Update · One Dream Community Care Service</div>
+      <div class="doc-cover-version">Effective 1 July 2026 · V1.5 JUN 2026</div>
+    </div>
+
+    <p>Dear ${ff(name)},</p>
+
+    <p>We are writing to inform you that, in accordance with clauses <strong>18.5 to 18.7</strong> of your existing Service Agreement (${ff(origVer)}), our published Prices for Support at Home services will be updated effective <strong>${ff(effDate)}</strong>.</p>
+
+    <div class="doc-info-box">
+      <strong>Why are our prices changing?</strong>
+      <p style="margin:6px 0 0 0;">Our prices are reviewed periodically to ensure we can continue delivering safe, high-quality services. This review reflects:</p>
+      <ul style="margin:6px 0 0 18px;">
+        <li>Annual CPI indexation</li>
+        <li>Consistent pricing across NSW, ACT, QLD and VIC</li>
+        <li>Rising costs of delivering aged care services</li>
+        <li>Fair Work Commission wage increases for aged care and home care workers from 1 July 2026</li>
+      </ul>
+    </div>
+
+    <div class="doc-section-h">Summary of Key Changes</div>
+    <table class="doc-table">
+      <tr><th>Service</th><th>Previous Price</th><th>New Price (from 1 July 2026)</th></tr>
+      <tr class="price-row-changed"><td>Personal Care – Self-care/ADLs (Standard)</td><td>$85</td><td>$99</td></tr>
+      <tr class="price-row-changed"><td>Day Care Centre – Our Client (per visit)</td><td>$20</td><td>$30</td></tr>
+      <tr class="price-row-changed"><td>Domestic Assistance – Cleaning/Laundry/Shopping (Standard)</td><td>$85</td><td>$95</td></tr>
+      <tr><td colspan="3" style="font-size:.8rem;">After-hours, Saturday, Sunday, and Public Holiday rates also increase proportionally. See full revised ${scheduleLabel} below.</td></tr>
+    </table>
+
+    <div class="doc-note">
+      <strong>What you need to do</strong>
+      <ol style="margin:6px 0 0 18px;">
+        <li>Review the revised ${scheduleLabel} (below).</li>
+        <li>Sign below to accept the variation, or arrange verbal consent with ODC staff.</li>
+      </ol>
+      ${deadlineParagraph}
+    </div>
+
+    <p style="font-size:.85rem;">Questions: <strong>1800 841 777</strong> · agedcare@onedreamcommunity.com.au · Suite 402, 11–15 Deane St, Burwood NSW 2134. Independent advice: Older Persons Advocacy Network — <strong>1800 700 600</strong>.</p>
+
+    <div class="doc-section-h">Acceptance and Acknowledgement</div>
+    <table class="doc-table">
+      <tr><td class="lbl" style="width:30%;">Participant Name</td><td>${ff(name)}</td></tr>
+      <tr><td class="lbl">AC ID</td><td>${ff(acId)}</td></tr>
+      <tr><td class="lbl">Original Agreement Date / Version</td><td>${ff(origDate)} · ${ff(origVer)}</td></tr>
+      <tr><td class="lbl">Contract Variant</td><td>${variantLabel}</td></tr>
+      <tr><td class="lbl">Variation Effective Date</td><td>${ff(effDate)}</td></tr>
+    </table>
+
+    <p style="margin-top:10px; font-size:.88rem;">By signing below, I confirm that:</p>
+    <ul style="font-size:.88rem;">
+      <li>I have received and read this Notice and the Revised ${scheduleLabel} (below).</li>
+      <li>I have had the opportunity to ask questions and seek independent advice.</li>
+      <li>I accept the revised prices effective from <strong>${ff(effDate)}</strong>.</li>
+      <li>All other terms of my existing Service Agreement remain in effect.</li>
+    </ul>
+
+    <div class="doc-section-h">Signatures</div>
+    <table class="doc-table">
+      <tr>
+        <td style="width:33%; vertical-align:top;">
+          <strong>Participant</strong><br>
+          ${sigCanvas('client')}
+          Name: ${ff(name)}<br>
+          Date: ${ff(effDate)}
+        </td>
+        <td style="width:33%; vertical-align:top;">
+          <strong>Representative (if signing on behalf)</strong><br>
+          ${sigCanvas('rep')}
+          Name: ${ff(legal)}<br>
+          Date: ${ff(effDate)}
+        </td>
+        <td style="width:33%; vertical-align:top;">
+          <strong>ODC Officer</strong><br>
+          ${sigCanvas('staff')}
+          Name: ${ff(officer)}<br>
+          Date: ${ff(effDate)}
+        </td>
+      </tr>
+    </table>
+
+    <div class="doc-section-h">Consent Record</div>
+    <table class="doc-table">
+      <tr>
+        <td style="width:50%; background:${isWritten ? '#eaf2e6' : 'white'};">
+          <strong>${isWritten ? '☑' : '☐'} Written Consent</strong>
+          <div style="font-size:.82rem; margin-top:3px;">Participant (or representative) signed above.</div>
+        </td>
+        <td style="background:${isVerbal ? '#eaf2e6' : 'white'};">
+          <strong>${isVerbal ? '☑' : '☐'} Verbal Consent</strong>
+          <div style="font-size:.82rem; margin-top:3px;">Recorded by ODC staff.</div>
+        </td>
+      </tr>
+    </table>
+    ${isVerbal ? `
+    <table class="doc-table" style="margin-top:6px;">
+      <tr><td class="lbl" style="width:25%;">Date of Verbal Consent</td><td>${ff(verbalDate)}</td><td class="lbl" style="width:20%;">Method</td><td>${ff(verbalMethod)}</td></tr>
+      <tr><td class="lbl">ODC Staff Member</td><td>${ff(officer)}</td><td class="lbl">Witness (if any)</td><td>${ff(witness)}</td></tr>
+      <tr><td class="lbl" style="vertical-align:top;">Summary of Conversation</td>
+          <td colspan="3"><div style="min-height:50px; border:1px solid #d8e2cf; padding:6px; background:#fafdf6; font-size:.82rem;">
+            <em style="color:#aaa;">[ ODC staff to record summary. ]</em>
+          </div></td></tr>
+    </table>` : ''}
+  </div>`;
+}
+
+function doc2_RevisedSchedule(variant, effDate){
+  const scheduleNum = variant === 'selfmanaged' ? 'Schedule 6' : 'Schedule 5';
+  const apOverhead  = variant === 'selfmanaged' ? '10%' : '20%';
+
+  return `
+  <div class="doc-card">
+    <div class="doc-cover">
+      <div class="doc-cover-title">Revised ${scheduleNum} – Price List</div>
+      <div class="doc-cover-subtitle">One Dream Community Care Service</div>
+      <div class="doc-cover-version">Effective ${effDate || '1 July 2026'} · V1.5 JUN 2026</div>
+    </div>
+
+    <p style="font-size:.83rem; font-style:italic;">Prices listed below replace the previous price list as of the effective date. Prices may be updated annually on or around 1 July each year (clause 18.6). Rows highlighted <span style="background:#fff8e7; padding:0 4px;">in yellow</span> are updated.</p>
+
+    <p style="font-size:.85rem; font-weight:700; color:var(--odc-green); margin-top:10px;">Clinical Nursing Services</p>
+    <table class="doc-table">
+      <tr><th>Service</th><th>Standard</th><th>After Hours</th><th>Saturday</th><th>Sunday</th><th>Public Holiday</th></tr>
+      <tr><td>Registered Nurse Home Visit</td><td>$160</td><td>$190</td><td>$240</td><td>$320</td><td>$400</td></tr>
+      <tr><td>Registered Nurse Telehealth</td><td>$110</td><td>$130</td><td>$165</td><td>$220</td><td>$275</td></tr>
+      <tr><td>Enrolled Nurse Home Visit</td><td>$140</td><td>$165</td><td>$210</td><td>$280</td><td>$350</td></tr>
+      <tr><td>Nursing Assistant Service</td><td>$110</td><td>$130</td><td>$165</td><td>$220</td><td>$275</td></tr>
+      <tr><td>Nursing Care Consumables</td><td colspan="5">Actual Cost</td></tr>
+    </table>
+
+    <p style="font-size:.85rem; font-weight:700; color:var(--odc-green); margin-top:10px;">Allied Health and Therapy (Standard Hours)</p>
+    <table class="doc-table">
+      <tr><th>Service</th><th>Rate</th><th>Service</th><th>Rate</th></tr>
+      <tr><td>Allied Health Assistance</td><td>$130</td><td>Podiatry</td><td>$165</td></tr>
+      <tr><td>Diet or Nutrition</td><td>$165</td><td>Psychology</td><td>$210</td></tr>
+      <tr><td>Exercise Physiology</td><td>$165</td><td>Social Work</td><td>$165</td></tr>
+      <tr><td>Physiotherapy</td><td>$189</td><td>Speech Pathology</td><td>$189</td></tr>
+      <tr><td>OT (Directive – onsite assessment)</td><td>$300</td><td>OT (Indirective – report writing)</td><td>$250</td></tr>
+    </table>
+    <p style="font-size:.78rem; color:#888;">** Travel cost may apply</p>
+
+    <p style="font-size:.85rem; font-weight:700; color:var(--odc-green); margin-top:10px;">Care Management (Hourly)</p>
+    <table class="doc-table">
+      <tr><td>Care Management</td><td>$120/hr</td></tr>
+      <tr><td>Restorative Care Management</td><td>$180/hr</td></tr>
+      <tr><td>End of Life Care Management</td><td>$180/hr</td></tr>
+    </table>
+
+    <p style="font-size:.85rem; font-weight:700; color:var(--odc-green); margin-top:10px;">Independence – Personal Care <span style="font-size:.78rem; color:#c0392b;">(Updated)</span></p>
+    <table class="doc-table">
+      <tr><th>Service</th><th>Standard</th><th>After Hours</th><th>Saturday</th><th>Sunday</th><th>Public Holiday</th></tr>
+      <tr class="price-row-changed"><td>Assistance with self-care and activities of daily living</td><td>$99</td><td>$116</td><td>$148</td><td>$198</td><td>$247</td></tr>
+    </table>
+
+    <p style="font-size:.85rem; font-weight:700; color:var(--odc-green); margin-top:10px;">Social Support and Community Engagement <span style="font-size:.78rem; color:#c0392b;">(Updated)</span></p>
+    <table class="doc-table">
+      <tr><th>Service</th><th>Standard</th><th>After Hours</th><th>Saturday</th><th>Sunday</th><th>Public Holiday</th></tr>
+      <tr><td>Individual social support</td><td>$100</td><td>$116</td><td>$145</td><td>$190</td><td>$235</td></tr>
+      <tr class="price-row-changed"><td>Day Care Centre (per visit – Our Client)</td><td colspan="5">$30</td></tr>
+      <tr><td>Day Care Centre (per visit – External Client)</td><td colspan="5">$120</td></tr>
+    </table>
+
+    <p style="font-size:.85rem; font-weight:700; color:var(--odc-green); margin-top:10px;">Respite Care</p>
+    <table class="doc-table">
+      <tr><th>Service</th><th>Standard</th><th>After Hours</th><th>Saturday</th><th>Sunday</th><th>Public Holiday</th></tr>
+      <tr><td>Flexible Respite</td><td>$100</td><td>$116</td><td>$145</td><td>$190</td><td>$235</td></tr>
+      <tr><td>Community and Centre Based Respite</td><td>$100</td><td>$116</td><td>$145</td><td>$190</td><td>$235</td></tr>
+    </table>
+
+    <p style="font-size:.85rem; font-weight:700; color:var(--odc-green); margin-top:10px;">Therapeutic Services for Independent Living (Hourly)</p>
+    <table class="doc-table">
+      <tr><td>Acupuncture</td><td>$140/hr</td></tr>
+      <tr><td>Chiropractic</td><td>$165/hr</td></tr>
+      <tr><td>Remedial massage</td><td>$160/hr</td></tr>
+    </table>
+
+    <p style="font-size:.85rem; font-weight:700; color:var(--odc-green); margin-top:10px;">Direct Transport (Per Trip)</p>
+    <table class="doc-table">
+      <tr><td>1–5KM</td><td>$10</td><td>15–20KM</td><td>$25</td></tr>
+      <tr><td>5–10KM</td><td>$15</td><td>20–25KM</td><td>$30</td></tr>
+      <tr><td>10–15KM</td><td>$20</td><td>25–30KM</td><td>$40</td></tr>
+      <tr><td>Over 30KM</td><td colspan="3">Per Quoted</td></tr>
+    </table>
+
+    <p style="font-size:.85rem; font-weight:700; color:var(--odc-green); margin-top:10px;">Everyday Living – Domestic Assistance <span style="font-size:.78rem; color:#c0392b;">(Updated)</span></p>
+    <table class="doc-table">
+      <tr><th>Service</th><th>Standard</th><th>After Hours</th><th>Saturday</th><th>Sunday</th><th>Public Holiday</th></tr>
+      <tr class="price-row-changed"><td>General House Cleaning</td><td>$95</td><td>$112</td><td>$142</td><td>$190</td><td>$237</td></tr>
+      <tr class="price-row-changed"><td>Laundry Services</td><td>$95</td><td>$112</td><td>$142</td><td>$190</td><td>$237</td></tr>
+      <tr class="price-row-changed"><td>Shopping Assistance</td><td>$95</td><td>$112</td><td>$142</td><td>$190</td><td>$237</td></tr>
+    </table>
+
+    <p style="font-size:.85rem; font-weight:700; color:var(--odc-green); margin-top:10px;">Home Maintenance and Repairs (Hourly)</p>
+    <table class="doc-table">
+      <tr><td>Gardening</td><td>$120/hr</td></tr>
+      <tr><td>Cleaning</td><td>$100/hr</td></tr>
+      <tr><td>Maintenance and Repairs</td><td>$120/hr</td></tr>
+    </table>
+
+    <p style="font-size:.85rem; font-weight:700; color:var(--odc-green); margin-top:10px;">Meal Preparation</p>
+    <table class="doc-table">
+      <tr><th>Service</th><th>Standard</th><th>After Hours</th><th>Saturday</th><th>Sunday</th><th>Public Holiday</th></tr>
+      <tr><td>Meal Preparation</td><td>$95</td><td>$112</td><td>$142</td><td>$190</td><td>$237</td></tr>
+    </table>
+
+    <p style="font-size:.85rem; font-weight:700; color:var(--odc-green); margin-top:10px;">Meal Delivery (Mon–Fri 8am–6pm)</p>
+    <table class="doc-table">
+      <tr><td>1–15KM</td><td>$54</td></tr>
+      <tr><td>16–22.5KM</td><td>$71</td></tr>
+      <tr><td>23–30KM</td><td>$94</td></tr>
+      <tr><td>Above 30KM</td><td>Per Quoted</td></tr>
+    </table>
+
+    <p style="font-size:.85rem; font-weight:700; color:var(--odc-green); margin-top:10px;">AT-HM (Per Quoted)</p>
+    <table class="doc-table">
+      <tr><td>Assistive Technology Administration Fee</td><td>10% of the cost for assistive technology or $500 (whichever is lower)</td></tr>
+      <tr><td>Home Modification Coordination Fee</td><td>15% of the quoted cost or up to $1,500 (whichever is lower)</td></tr>
+    </table>
+
+    <p style="font-size:.85rem; font-weight:700; color:var(--odc-green); margin-top:10px;">Associated Provider (Third Party Provider)</p>
+    <table class="doc-table">
+      <tr><td>Overhead</td><td>An overhead of ${apOverhead} may apply when services are directly sourced from an Associated Provider.</td></tr>
+    </table>
+  </div>`;
+}
+
+// ════════════════════════════════════════════════════════════════
+// CHANGE HANDLERS
+// ════════════════════════════════════════════════════════════════
+let _renderTimer, _saveTimer;
+function debouncedRender(){
+  clearTimeout(_renderTimer);
+  _renderTimer = setTimeout(renderDocs, 350);
+}
+function live(){
+  clearTimeout(_saveTimer);
+  _saveTimer = setTimeout(() => {
+    try { localStorage.setItem(SAVE_KEY, JSON.stringify(collectAll())); } catch(e){}
+  }, 600);
+}
+function onInputChange(){
+  debouncedRender();
+  live();
+}
+function onSettingChange(){
+  toggleVerbal();
+  renderDocs();    // immediate (variant or consent toggled)
+  live();
+}
+
+// ════════════════════════════════════════════════════════════════
+// SAVE / LOAD
+// ════════════════════════════════════════════════════════════════
+function collectAll(){
+  const ids = ['f_name','f_dob','f_acId','f_mobile','f_email','f_address',
+               'f_origDate','f_origVersion','f_effDate','f_deadline',
+               'f_officer','f_legal','f_verbalDate','f_verbalMethod','f_witness'];
+  const values = {};
+  ids.forEach(id => values[id] = fv(id));
+  captureCurrentSigs();
+  return {
+    app: 'odc-price-variation-2026-express',
+    version: 1,
+    savedAt: new Date().toISOString(),
+    values,
+    variant: getVariant(),
+    consentMethod: getConsentMethod(),
+    sig: Object.assign({}, sigState),
+    docOverrides: docOverrides || {}
+  };
+}
+function restoreAll(data){
+  if (!data || !data.values) return;
+  Object.keys(data.values).forEach(id => {
+    const el = $(id);
+    if (el) el.value = data.values[id];
+  });
+  if (data.variant) {
+    const r = document.querySelector('input[name="variant"][value="' + data.variant + '"]');
+    if (r) r.checked = true;
+  }
+  if (data.consentMethod) {
+    const r = document.querySelector('input[name="consentMethod"][value="' + data.consentMethod + '"]');
+    if (r) r.checked = true;
+  }
+  if (data.sig) {
+    sigState.client = data.sig.client || null;
+    sigState.rep    = data.sig.rep    || null;
+    sigState.staff  = data.sig.staff  || null;
+  }
+  docOverrides = (data.docOverrides && typeof data.docOverrides === 'object') ? Object.assign({}, data.docOverrides) : {};
+  toggleVerbal();
+  renderDocs();
+}
+function clearAll(){
+  if (!confirm('Clear all data and start fresh for a new client?')) return;
+  ['f_name','f_dob','f_acId','f_mobile','f_email','f_address','f_origDate',
+   'f_deadline','f_officer','f_legal','f_verbalDate','f_verbalMethod','f_witness'].forEach(id => { const el = $(id); if (el) el.value = ''; });
+  $('f_origVersion').value = 'V1.4 JAN 2026';
+  $('f_effDate').value = '2026-07-01';
+  document.querySelector('input[name="variant"][value="allstates"]').checked = true;
+  document.querySelector('input[name="consentMethod"][value="written"]').checked = true;
+  sigState.client = sigState.rep = sigState.staff = null;
+  docOverrides = {};
+  toggleVerbal();
+  try { localStorage.removeItem(SAVE_KEY); } catch(e){}
+  renderDocs();
+  toast('✓ Cleared. Ready for next client.', 'success');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ════════════════════════════════════════════════════════════════
+// SHAREPOINT
+// ════════════════════════════════════════════════════════════════
+let _spInitPromise = null;
+function _spInit(){
+  if (_spInitPromise) return _spInitPromise;
+  _spInitPromise = (async () => {
+    const start = Date.now();
+    while (!window.__msalLoaded && typeof msal === 'undefined' && Date.now() - start < 5000) {
+      await new Promise(r => setTimeout(r, 100));
+    }
+    if (typeof msal === 'undefined') {
+      toast('Microsoft Authentication library failed to load. Refresh and try again.', 'error');
+      return null;
+    }
+    _msal = new msal.PublicClientApplication({
+      auth: {
+        clientId: SP_CONFIG.clientId,
+        authority: 'https://login.microsoftonline.com/' + SP_CONFIG.tenantId,
+        redirectUri: SP_CONFIG.redirectUri,
+        navigateToLoginRequestUrl: true
+      },
+      cache: { cacheLocation: 'localStorage', storeAuthStateInCookie: false }
+    });
+    if (typeof _msal.initialize === 'function') { try { await _msal.initialize(); } catch(e){} }
+    try {
+      const result = await _msal.handleRedirectPromise();
+      if (result && result.account) _msal.setActiveAccount(result.account);
+    } catch(e){ console.warn(e); }
+    _spUpdateUi();
+    return _msal;
+  })();
+  return _spInitPromise;
+}
+function _spCurrentAccount(){
+  if (!_msal) return null;
+  const accs = _msal.getAllAccounts();
+  return accs && accs.length ? accs[0] : null;
+}
+async function _spAcquireToken(){
+  if (_msal && typeof _msal.initialize === 'function') { try { await _msal.initialize(); } catch(e){} }
+  const account = _spCurrentAccount();
+  if (!account) throw new Error('Not signed in');
+  try {
+    const r = await _msal.acquireTokenSilent({ scopes: SP_CONFIG.scopes, account });
+    return r.accessToken;
+  } catch(e) {
+    if ((typeof msal !== 'undefined' && e instanceof msal.InteractionRequiredAuthError)
+        || /interaction_required|consent_required|login_required/i.test(e.message || '')) {
+      toast('Microsoft 로그인 세션이 만료되어 다시 로그인합니다.', 'info');
+      try { await _msal.acquireTokenRedirect({ scopes: SP_CONFIG.scopes, account }); }
+      catch(re){ console.error(re); throw re; }
+      throw new Error('Redirecting for re-authentication');
+    }
+    throw e;
+  }
+}
+async function _graph(url, opts){
+  const token = await _spAcquireToken();
+  const headers = Object.assign({}, (opts && opts.headers) || {}, { Authorization: 'Bearer ' + token });
+  const res = await fetch(url, Object.assign({}, opts || {}, { headers }));
+  if (!res.ok) {
+    let detail = ''; try { detail = await res.text(); } catch(e){}
+    throw new Error('Graph ' + res.status + ': ' + (detail.slice(0, 240) || res.statusText));
+  }
+  return res;
+}
+function _spEncodePath(p){ return p.split('/').map(encodeURIComponent).join('/'); }
+async function _spGetSiteId(){
+  if (_spCache.siteId) return _spCache.siteId;
+  const res = await _graph('https://graph.microsoft.com/v1.0/sites/' + SP_CONFIG.spHost + ':' + SP_CONFIG.spSitePath);
+  _spCache.siteId = (await res.json()).id;
+  return _spCache.siteId;
+}
+async function _spGetDriveId(){
+  if (_spCache.driveId) return _spCache.driveId;
+  const siteId = await _spGetSiteId();
+  const res = await _graph('https://graph.microsoft.com/v1.0/sites/' + siteId + '/drive');
+  _spCache.driveId = (await res.json()).id;
+  return _spCache.driveId;
+}
+async function _spEnsureFolder(path){
+  const driveId = await _spGetDriveId();
+  const probe = 'https://graph.microsoft.com/v1.0/drives/' + driveId + '/root:/' + _spEncodePath(path);
+  try { await _graph(probe); return; } catch(e){ if (!/Graph 404/.test(e.message)) throw e; }
+  const segs = path.split('/');
+  let cur = '';
+  for (let i = 0; i < segs.length; i++) {
+    const parent = cur;
+    cur = cur ? cur + '/' + segs[i] : segs[i];
+    const exists = 'https://graph.microsoft.com/v1.0/drives/' + driveId + '/root:/' + _spEncodePath(cur);
+    try { await _graph(exists); continue; } catch(e){ if (!/Graph 404/.test(e.message)) throw e; }
+    const createUrl = parent
+      ? 'https://graph.microsoft.com/v1.0/drives/' + driveId + '/root:/' + _spEncodePath(parent) + ':/children'
+      : 'https://graph.microsoft.com/v1.0/drives/' + driveId + '/root/children';
+    await _graph(createUrl, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: segs[i], folder: {}, '@microsoft.graph.conflictBehavior': 'fail' })
+    });
+  }
+}
+function _spUpdateUi(){
+  const acc = _spCurrentAccount();
+  if (acc) {
+    $('spState').textContent = '✓ ' + (acc.username || acc.name || 'signed in');
+    $('spSignInBtn').style.display = 'none';
+    $('spSignOutBtn').style.display = '';
+  } else {
+    $('spState').textContent = 'Not signed in';
+    $('spSignInBtn').style.display = '';
+    $('spSignOutBtn').style.display = 'none';
+  }
+}
+window.spSignIn = async function(){
+  const inst = await _spInit();
+  if (!inst) return;
+  try { await inst.loginRedirect({ scopes: SP_CONFIG.scopes, prompt: 'select_account' }); }
+  catch(e){ toast('Sign-in failed: ' + (e.message || e), 'error'); }
+};
+window.spSignOut = function(){
+  if (!_msal) return;
+  const acc = _spCurrentAccount();
+  if (!acc) { _spUpdateUi(); return; }
+  try { _msal.logoutRedirect({ account: acc, postLogoutRedirectUri: SP_CONFIG.redirectUri }); }
+  catch(e){ toast('Sign-out failed: ' + e.message, 'error'); }
+};
+
+window.openClientPicker = async function(){
+  $('pickerBackdrop').classList.add('open');
+  pickerSetStatus('Connecting to SharePoint…', 'info');
+  $('pickerBody').innerHTML = '';
+  try {
+    await _spInit();
+    if (!_spCurrentAccount()) {
+      pickerSetStatus('Please sign in with your ODC Microsoft 365 account first.', 'info');
+      $('pickerBody').innerHTML = '<div style="text-align:center; padding:20px;"><button class="btn btn-primary" onclick="spSignIn()">Sign in with Microsoft</button></div>';
+      return;
+    }
+    const driveId = await _spGetDriveId();
+    const url = 'https://graph.microsoft.com/v1.0/drives/' + driveId + '/root:/' + _spEncodePath(SP_CONFIG.spFolderPath) + ':/children?$top=200&$orderby=lastModifiedDateTime desc';
+    const res = await _graph(url);
+    const data = await res.json();
+    const items = (data.value || []).filter(i => i.file && /\.json$/i.test(i.name) && !/Variation/i.test(i.name));
+    if (!items.length) {
+      pickerSetStatus('No saved client agreements found in ' + SP_CONFIG.spFolderPath, 'info');
+      $('pickerBody').innerHTML = '<div class="picker-empty">No existing client files. Save a Service Agreement first from the main contract form.</div>';
+      return;
+    }
+    pickerSetStatus(items.length + ' file(s) — click one to load.', 'success');
+    $('pickerBody').innerHTML = items.map(item => {
+      const lastMod = item.lastModifiedDateTime ? new Date(item.lastModifiedDateTime).toLocaleString() : '';
+      const savedBy = (item.lastModifiedBy && item.lastModifiedBy.user && item.lastModifiedBy.user.displayName) || '';
+      const safeId  = escapeHtml(item.id);
+      const safeName = escapeHtml(item.name);
+      const argName = safeName.replace(/\\/g,'\\\\').replace(/\x27/g,'\\\x27');
+      return '<div class="picker-row" onclick="loadFromSharePoint(\'' + safeId + '\',\'' + argName + '\')">'
+           + '<div><div class="name">' + safeName + '</div>'
+           + '<div class="meta">' + (savedBy ? '👤 ' + escapeHtml(savedBy) + ' · ' : '') + '🕐 ' + lastMod + '</div></div>'
+           + '<button class="btn btn-sm btn-success" onclick="event.stopPropagation(); loadFromSharePoint(\'' + safeId + '\',\'' + argName + '\')">Load →</button>'
+           + '</div>';
+    }).join('');
+  } catch(e) {
+    console.error(e);
+    pickerSetStatus('Failed to list files: ' + (e.message || e), 'error');
+  }
+};
+function pickerSetStatus(msg, kind){
+  const s = $('pickerStatus');
+  s.className = 'picker-status ' + (kind || 'info');
+  s.textContent = msg;
+}
+window.closePicker = function(){ $('pickerBackdrop').classList.remove('open'); };
+
+window.loadFromSharePoint = async function(itemId, name){
+  pickerSetStatus('Loading ' + name + '…', 'info');
+  try {
+    const driveId = await _spGetDriveId();
+    const meta = await (await _graph('https://graph.microsoft.com/v1.0/drives/' + driveId + '/items/' + itemId + '?$select=id,name,@microsoft.graph.downloadUrl')).json();
+    const dlUrl = meta['@microsoft.graph.downloadUrl'];
+    const data = await (await fetch(dlUrl)).json();
+
+    let arr = null;
+    if (Array.isArray(data.values)) arr = data.values;
+    else if (Array.isArray(data.v)) arr = data.v;
+    if (arr) {
+      $('f_name').value    = arr[0]  || '';
+      $('f_dob').value     = arr[1]  || '';
+      $('f_acId').value    = arr[2]  || '';
+      $('f_mobile').value  = arr[3]  || '';
+      const street   = arr[6]  || '';
+      const suburb   = arr[7]  || '';
+      const postcode = arr[8]  || '';
+      $('f_address').value = [street, suburb, postcode].filter(Boolean).join(', ');
+      const ctype = arr.find(v => v === 'sydney' || v === 'others' || v === 'selfmanaged');
+      if (ctype === 'selfmanaged') {
+        document.querySelector('input[name="variant"][value="selfmanaged"]').checked = true;
+      } else {
+        document.querySelector('input[name="variant"][value="allstates"]').checked = true;
+      }
+    }
+    closePicker();
+    docOverrides = {};   // forget any prior typed-in overrides — they were for the previous client
+    renderDocs();
+    live();
+    toast('✓ Loaded participant details from <strong>' + escapeHtml(name) + '</strong>. Please double-check fields before signing.', 'success');
+  } catch(e) {
+    console.error(e);
+    pickerSetStatus('Load failed: ' + (e.message || e), 'error');
+  }
+};
+
+window.saveToSharePoint = async function(){
+  try {
+    await _spInit();
+    if (!_spCurrentAccount()) { toast('Please sign in with Microsoft first (top right).', 'error'); return; }
+    if (!fv('f_name')) { toast('Participant name is required before saving.', 'error'); return; }
+
+    const data = collectAll();
+    data.savedBy = (_spCurrentAccount().username) || '';
+    const cleanName = (fv('f_name') || 'Client').replace(/[\\/:*?"<>|]/g, '_');
+    const dateStamp = (fv('f_effDate') || new Date().toISOString().slice(0,10)).replace(/-/g, '');
+    const filename = 'ODC-Variation_' + cleanName + '_' + dateStamp + '.json';
+
+    const targetFolder = SP_CONFIG.spFolderPath + '/' + SP_CONFIG.variationsSubfolder;
+    await _spEnsureFolder(targetFolder);
+
+    const driveId = await _spGetDriveId();
+    const uploadUrl = 'https://graph.microsoft.com/v1.0/drives/' + driveId
+      + '/root:/' + _spEncodePath(targetFolder + '/' + filename) + ':/content';
+    await _graph(uploadUrl, {
+      method: 'PUT', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+
+    toast('✓ Variation saved to SharePoint:<br><strong>' + escapeHtml(targetFolder + '/' + filename) + '</strong>', 'success');
+  } catch(e) {
+    console.error(e);
+    if (e.message !== 'Redirecting for re-authentication') {
+      toast('Save to SharePoint failed: ' + (e.message || e), 'error');
+    }
+  }
+};
+
+// ════════════════════════════════════════════════════════════════
+// PDF
+// ════════════════════════════════════════════════════════════════
+async function generatePdf(){
+  // Make sure inline-canvas signatures are flushed into ss state and that the
+  // docContainer is fully rendered before snapshotting.
+  captureCurrentSigs();
+  await new Promise(r => setTimeout(r, 100));
+
+  const jsPDFClass = (window.jspdf && window.jspdf.jsPDF) ? window.jspdf.jsPDF : window.jsPDF;
+  if (!jsPDFClass) { alert('PDF library failed to load. Refresh and try again.'); return; }
+
+  document.body.classList.add('pdf-rendering');
+  const prevScrollY = window.scrollY; window.scrollTo(0, 0);
+  await new Promise(r => setTimeout(r, 400));
+
+  const pdf = new jsPDFClass({ unit: 'pt', format: 'a4', orientation: 'portrait', compress: true });
+  const MARGIN_X = 24, MARGIN_TOP = 28, MARGIN_BOTTOM = 36;
+  const usableWidthPt = 595 - 2 * MARGIN_X;
+  const htmlScale = usableWidthPt / 780;
+  const target = $('docContainer');
+
+  try {
+    await new Promise((resolve, reject) => {
+      pdf.html(target, {
+        callback: () => resolve(),
+        margin: [MARGIN_TOP, MARGIN_X, MARGIN_BOTTOM, MARGIN_X],
+        autoPaging: 'slice', x: 0, y: 0, width: usableWidthPt, windowWidth: 780,
+        html2canvas: { scale: htmlScale, useCORS: true, letterRendering: true, logging: false, backgroundColor: '#ffffff', windowWidth: 780, width: 780, height: target.scrollHeight }
+      });
+    });
+
+    try {
+      const pageCount = pdf.getNumberOfPages();
+      const pw = pdf.internal.pageSize.getWidth();
+      const ph = pdf.internal.pageSize.getHeight();
+      pdf.setFont('helvetica', 'normal'); pdf.setFontSize(9); pdf.setTextColor(110,110,110);
+      for (let i = 1; i <= pageCount; i++) {
+        pdf.setPage(i);
+        const lbl = 'Page ' + i + ' of ' + pageCount;
+        pdf.text(lbl, pw - MARGIN_X - pdf.getTextWidth(lbl), ph - 14);
+      }
+    } catch(e){ console.warn(e); }
+
+    const cleanName = (fv('f_name') || 'Client').replace(/[\\/:*?"<>|]/g, '_');
+    pdf.save('ODC-PriceVariation_' + cleanName + '.pdf');
+  } catch(e) {
+    console.error(e);
+    alert('PDF generation failed: ' + e.message);
+  } finally {
+    document.body.classList.remove('pdf-rendering');
+    window.scrollTo(0, prevScrollY);
+  }
+}
+
+// ════════════════════════════════════════════════════════════════
+// BOOT
+// ════════════════════════════════════════════════════════════════
+window.addEventListener('DOMContentLoaded', () => {
+  toggleVerbal();
+  try {
+    const raw = localStorage.getItem(SAVE_KEY);
+    if (raw) {
+      restoreAll(JSON.parse(raw));
+    } else {
+      renderDocs();
+    }
+  } catch(e){ renderDocs(); }
+  _spInit().catch(e => console.warn('SP init:', e));
+});
+window.addEventListener('resize', () => {
+  // Re-init pads on resize (canvas dimensions change)
+  captureCurrentSigs();
+  setTimeout(initSigPadsInDoc, 0);
+});
+</script>
+
+</body>
+</html>
